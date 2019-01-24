@@ -19,8 +19,19 @@ app.post('/todos', (req, res) => {
     doc => {
       res.send(doc);
     },
-    err => {
-      res.status(400).send(err);
+    e => {
+      res.status(400).send(e);
+    }
+  );
+});
+
+app.get('/todos', (req, res) => {
+  Todo.find().then(
+    todos => {
+      res.send({ todos }); // Sending object is better than sending array
+    },
+    e => {
+      res.status(400).send(e);
     }
   );
 });
@@ -28,3 +39,5 @@ app.post('/todos', (req, res) => {
 app.listen(3000, () => {
   console.log('Starting on port 3000');
 });
+
+module.exports = { app };
