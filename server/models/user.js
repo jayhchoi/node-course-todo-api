@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -34,6 +35,7 @@ const userSchema = new mongoose.Schema({
   ]
 });
 
+// Overriding given method to pick what fields to send
 userSchema.methods.toJSON = function() {
   const user = this;
   const userObject = user.toObject();
@@ -76,6 +78,22 @@ userSchema.statics.findByToken = function(token) {
     'tokens.access': decoded.access
   });
 };
+
+userSchema.pre('save', function(next) {
+  const user = this;
+
+  if (user.isModified('password')) {
+    bcrypt
+      .genSalt(10)
+      .then(salt => bcrypt.hash(user.password, salt))
+      .then(hashed => {
+        user.password = hashed;
+        next();
+      });
+  } else {
+    next();
+  }
+});
 
 const User = mongoose.model('User', userSchema);
 
