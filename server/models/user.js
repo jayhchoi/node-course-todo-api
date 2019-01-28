@@ -79,6 +79,31 @@ userSchema.statics.findByToken = function(token) {
   });
 };
 
+userSchema.statics.findByCredentials = function(email, password) {
+  const User = this;
+
+  return User.findOne({ email }) // findOne method itself returns a promise
+    .then(user => {
+      if (!user) {
+        return Promise.reject('There is no user by the email'); // Shortcut for new Promise((resolve, reject) =>)
+      }
+
+      return new Promise((resolve, reject) => {
+        // Compare the hashed and string passwords
+        bcrypt.compare(password, user.password, (err, isEqual) => {
+          if (isEqual) {
+            resolve(user);
+          } else {
+            reject('Password is not valid');
+          }
+        });
+      });
+    })
+    .catch(e => {
+      return Promise.reject(e);
+    });
+};
+
 userSchema.pre('save', function(next) {
   const user = this;
 
