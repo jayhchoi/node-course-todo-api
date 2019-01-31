@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { Schema, ObjectId } = mongoose;
 
 const todoSchema = new Schema({
   text: {
@@ -15,6 +15,10 @@ const todoSchema = new Schema({
   completedAt: {
     type: Number,
     default: null
+  },
+  _creator: {
+    type: ObjectId,
+    required: true
   }
 });
 
