@@ -1,9 +1,7 @@
 require('./config/config');
 const express = require('express');
 const bodyParser = require('body-parser');
-
-const { mongoose } = require('./db/mongoose');
-const { ObjectID } = require('mongodb');
+require('./db/mongoose');
 
 const app = express();
 
@@ -14,10 +12,8 @@ app.use(bodyParser.json());
 require('./routes/todosRoutes')(app);
 require('./routes/usersRoutes')(app);
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Starting on port ${PORT}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Starting on port ${process.env.PORT}`);
 });
 
 module.exports = { app };
